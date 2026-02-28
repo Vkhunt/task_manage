@@ -1,10 +1,3 @@
-// ============================================================
-// app/page.tsx
-// DASHBOARD PAGE - the home page of the app.
-// This is a SERVER COMPONENT (no "use client" directive).
-// Server components fetch data on the server and send HTML to browser.
-// ============================================================
-
 import Link from "next/link";
 import { Task } from "@/types/task";
 import { formatDate } from "@/lib/utils";
@@ -16,39 +9,34 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-// This function runs on the server to fetch tasks
-// No loading states needed - server waits for data then sends complete HTML
 async function getTasks(): Promise<Task[]> {
   try {
-    // In server components, we use the full URL with localhost
-    // process.env.NEXT_PUBLIC_APP_URL defaults to localhost in dev
+
     const baseUrl =
       process.env.NEXT_PUBLIC_BASE_URL ||
       (process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
         : "http://localhost:3000");
     const response = await fetch(`${baseUrl}/api/tasks`, {
-      // cache: "no-store" = always fetch fresh data (don't use cache)
+
       cache: "no-store",
     });
     if (!response.ok) return [];
     return response.json();
   } catch {
-    return []; // Return empty array if fetch fails
+    return [];
   }
 }
 
-// StatCard component - a small reusable card for showing a stat number
-// We define it inside this file since it's only used here
 function StatCard({
   title,
   count,
-  icon: Icon, // Destructure "icon" and rename to "Icon" (must start with capital)
+  icon: Icon,
   color,
 }: {
   title: string;
   count: number;
-  icon: React.ElementType; // ElementType = any React component (like Lucide icons)
+  icon: React.ElementType;
   color: string;
 }) {
   return (
@@ -66,13 +54,10 @@ function StatCard({
   );
 }
 
-// The main Dashboard page component
-// "async" means this is an async server component - it can await data
 export default async function DashboardPage() {
-  // Fetch tasks from our API (runs on server)
+
   const tasks = await getTasks();
 
-  // Calculate statistics from the tasks array
   const totalTasks = tasks.length;
   const todoCount = tasks.filter((t) => t.status === "todo").length;
   const inProgressCount = tasks.filter(
@@ -80,18 +65,16 @@ export default async function DashboardPage() {
   ).length;
   const doneCount = tasks.filter((t) => t.status === "done").length;
 
-  // Get the 3 most recently created tasks for the "Recent Tasks" section
-  // sort() orders by createdAt date, newest first
   const recentTasks = [...tasks]
     .sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     )
-    .slice(0, 3); // Take first 3
+    .slice(0, 3);
 
   return (
     <div className="flex flex-col gap-8">
-      {/* ---- PAGE HEADER ---- */}
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
@@ -100,7 +83,7 @@ export default async function DashboardPage() {
           </p>
         </div>
 
-        {/* Quick action button */}
+
         <Link
           href="/create"
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
@@ -110,8 +93,8 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
-      {/* ---- STATS GRID ---- */}
-      {/* 4 columns on large screens, 2 on medium, 1 on mobile */}
+
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="Total Tasks"
@@ -139,11 +122,11 @@ export default async function DashboardPage() {
         />
       </div>
 
-      {/* ---- RECENT TASKS ---- */}
+
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
         <div className="flex items-center justify-between mb-5">
           <h2 className="font-semibold text-gray-900">Recent Tasks</h2>
-          {/* Link to see all tasks */}
+
           <Link
             href="/tasks"
             className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
@@ -153,7 +136,7 @@ export default async function DashboardPage() {
         </div>
 
         {recentTasks.length === 0 ? (
-          // Empty state - shown when there are no tasks
+
           <div className="text-center py-10">
             <CheckSquare className="h-10 w-10 text-gray-300 mx-auto mb-3" />
             <p className="text-gray-500">
@@ -167,7 +150,7 @@ export default async function DashboardPage() {
             </Link>
           </div>
         ) : (
-          // Task list
+
           <div className="flex flex-col gap-3">
             {recentTasks.map((task) => (
               <Link
@@ -183,7 +166,7 @@ export default async function DashboardPage() {
                     Created {formatDate(task.createdAt)}
                   </span>
                 </div>
-                {/* Status badge */}
+
                 <span
                   className={`text-xs px-2.5 py-0.5 rounded-full capitalize font-medium ${
                     task.status === "done"

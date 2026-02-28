@@ -1,24 +1,17 @@
-// ============================================================
-// app/tasks/[id]/DeleteTaskButton.tsx
-// Client component for the delete button on the task detail page.
-// Separate from the server component because it needs onClick events.
-// Uses ConfirmDialog for a better UX than window.confirm().
-// ============================================================
-
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store";
-import { removeTask } from "@/store/taskSlice"; // Delete thunk
+import { removeTask } from "@/store/taskSlice";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { Trash2, Loader2 } from "lucide-react";
 
-// Updated props — accepts taskTitle for the confirm dialog message
+
 interface DeleteTaskButtonProps {
   taskId: string;
-  taskTitle?: string; // Used in the confirmation message
+  taskTitle?: string;
 }
 
 export default function DeleteTaskButton({
@@ -29,29 +22,29 @@ export default function DeleteTaskButton({
   const dispatch = useDispatch<AppDispatch>();
 
   const [isDeleting, setIsDeleting] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false); // Controls ConfirmDialog
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleDeleteClick = () => {
-    setDialogOpen(true); // Open the confirm dialog
+    setDialogOpen(true);
   };
 
   const handleConfirm = async () => {
     setDialogOpen(false);
     setIsDeleting(true);
 
-    // Dispatch removeTask thunk → DELETE /api/tasks/:id
+
     const result = await dispatch(removeTask(taskId));
 
     if (removeTask.fulfilled.match(result)) {
-      router.push("/tasks"); // Navigate to list after delete
+      router.push("/tasks");
     } else {
-      setIsDeleting(false); // Reset on failure
+      setIsDeleting(false);
     }
   };
 
   return (
     <>
-      {/* ---- DELETE TRIGGER BUTTON ---- */}
+
       <button
         onClick={handleDeleteClick}
         disabled={isDeleting}
@@ -72,14 +65,14 @@ export default function DeleteTaskButton({
         )}
       </button>
 
-      {/* ---- CONFIRM DIALOG (replaces window.confirm) ---- */}
+
       <ConfirmDialog
         open={dialogOpen}
         title="Delete Task"
         description={`Are you sure you want to delete "${taskTitle}"? This action cannot be undone.`}
         confirmLabel="Yes, Delete"
         cancelLabel="Cancel"
-        destructive={true} // Red confirm button
+        destructive={true}
         onConfirm={handleConfirm}
         onCancel={() => setDialogOpen(false)}
       />

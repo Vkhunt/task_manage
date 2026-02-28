@@ -1,20 +1,10 @@
-// ============================================================
-// components/TaskForm.tsx
-// Reusable form for creating AND editing tasks.
-// Uses useTaskForm() custom hook for all state + validation logic.
-//
-// Props:
-//   mode          : "create" | "edit"
-//   existingTask? : Task  (pre-fills the form in edit mode)
-// ============================================================
-
 "use client";
 
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
-import { createTask, editTask } from "@/store/taskSlice"; // Async thunks
-import { useTaskForm } from "@/hooks/useTaskForm"; // ← Custom hook
+import { createTask, editTask } from "@/store/taskSlice";
+import { useTaskForm } from "@/hooks/useTaskForm";
 import { Task } from "@/types/task";
 import { cn } from "@/lib/utils";
 import LoadingSpinner from "./LoadingSpinner";
@@ -25,8 +15,7 @@ interface TaskFormProps {
   existingTask?: Task;
 }
 
-// ---- Label component (defined OUTSIDE TaskForm to avoid re-creation on render) ----
-// React rule: never define components inside another component's render function.
+
 function FormLabel({
   htmlFor,
   children,
@@ -48,32 +37,27 @@ export default function TaskForm({ mode, existingTask }: TaskFormProps) {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
-  // Read loading status from Redux to disable the submit button while saving
+
   const status = useSelector((state: RootState) => state.tasks.status);
   const isLoading = status === "loading";
 
-  // ---- useTaskForm custom hook ----
-  // In edit mode, we pass existingTask as initialValues to pre-fill the form
-  // In create mode, we pass nothing (starts with empty defaults)
+
   const { values, handleChange, handleSubmit, errors, reset } = useTaskForm(
     existingTask ? existingTask : undefined,
   );
 
-  // ---- Form submit handler ----
-  // handleSubmit() from the hook:
-  //   1. Validates all fields
-  //   2. If valid, calls our callback with cleaned data
+
   const onSubmit = () => {
     handleSubmit(async (data) => {
       if (mode === "create") {
-        // Dispatch createTask thunk → POST /api/tasks
+
         const result = await dispatch(createTask(data));
-        // Only navigate if the thunk succeeded (not rejected)
+
         if (createTask.fulfilled.match(result)) {
           router.push("/tasks");
         }
       } else if (existingTask) {
-        // Dispatch editTask thunk → PUT /api/tasks/:id
+
         const result = await dispatch(editTask({ id: existingTask.id, data }));
         if (editTask.fulfilled.match(result)) {
           router.push(`/tasks/${existingTask.id}`);
@@ -84,7 +68,7 @@ export default function TaskForm({ mode, existingTask }: TaskFormProps) {
 
   return (
     <div className="flex flex-col gap-5">
-      {/* ---- TITLE ---- */}
+
       <div className="flex flex-col gap-1.5">
         <FormLabel htmlFor="title" required>
           Title
@@ -93,7 +77,7 @@ export default function TaskForm({ mode, existingTask }: TaskFormProps) {
           id="title"
           type="text"
           value={values.title}
-          // handleChange from hook: (field, value) => updates that field
+
           onChange={(e) => handleChange("title", e.target.value)}
           placeholder="Enter task title..."
           className={cn(
@@ -101,11 +85,11 @@ export default function TaskForm({ mode, existingTask }: TaskFormProps) {
             errors.title ? "border-red-400 bg-red-50" : "border-gray-200",
           )}
         />
-        {/* Show validation error from hook's errors object */}
+
         {errors.title && <p className="text-xs text-red-500">{errors.title}</p>}
       </div>
 
-      {/* ---- DESCRIPTION ---- */}
+
       <div className="flex flex-col gap-1.5">
         <FormLabel htmlFor="description">Description</FormLabel>
         <textarea
@@ -118,7 +102,7 @@ export default function TaskForm({ mode, existingTask }: TaskFormProps) {
         />
       </div>
 
-      {/* ---- PRIORITY + STATUS (side by side) ---- */}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="flex flex-col gap-1.5">
           <FormLabel htmlFor="priority" required>
@@ -159,7 +143,7 @@ export default function TaskForm({ mode, existingTask }: TaskFormProps) {
         </div>
       </div>
 
-      {/* ---- DUE DATE + ASSIGNED TO ---- */}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="flex flex-col gap-1.5">
           <FormLabel htmlFor="dueDate" required>
@@ -193,7 +177,7 @@ export default function TaskForm({ mode, existingTask }: TaskFormProps) {
         </div>
       </div>
 
-      {/* ---- TAGS ---- */}
+
       <div className="flex flex-col gap-1.5">
         <FormLabel htmlFor="tags">
           Tags{" "}
@@ -211,9 +195,9 @@ export default function TaskForm({ mode, existingTask }: TaskFormProps) {
         />
       </div>
 
-      {/* ---- BUTTONS ---- */}
+
       <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-        {/* Back button */}
+
         <button
           type="button"
           onClick={() => router.back()}
@@ -224,7 +208,7 @@ export default function TaskForm({ mode, existingTask }: TaskFormProps) {
         </button>
 
         <div className="flex items-center gap-3">
-          {/* Reset button — calls reset() from useTaskForm */}
+
           {mode === "create" && (
             <button
               type="button"
@@ -235,7 +219,7 @@ export default function TaskForm({ mode, existingTask }: TaskFormProps) {
             </button>
           )}
 
-          {/* Submit button */}
+
           <button
             type="button"
             onClick={onSubmit}
@@ -244,7 +228,7 @@ export default function TaskForm({ mode, existingTask }: TaskFormProps) {
                        hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
           >
             {isLoading ? (
-              // Show spinner while saving
+
               <LoadingSpinner size="sm" />
             ) : (
               <Save className="h-4 w-4" />

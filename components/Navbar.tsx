@@ -1,8 +1,3 @@
-// ============================================================
-// components/Navbar.tsx
-// Navigation bar with dark mode toggle button.
-// ============================================================
-
 "use client";
 
 import Link from "next/link";
@@ -16,7 +11,7 @@ import {
   Sun,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useTheme } from "@/context/ThemeContext"; // Dark mode hook
+import { useTheme } from "@/context/ThemeContext";
 
 const navLinks = [
   { label: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -27,16 +22,14 @@ const navLinks = [
 export default function Navbar() {
   const pathname = usePathname();
 
-  // useTheme() gives us:
-  //   theme         : "light" | "dark"
-  //   toggleTheme() : switches between light and dark
+
   const { theme, toggleTheme } = useTheme();
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* ---- LOGO ---- */}
+
           <Link href="/" className="flex items-center gap-2">
             <CheckSquare className="h-7 w-7 text-blue-600" />
             <span className="text-xl font-bold text-gray-900">
@@ -44,7 +37,7 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* ---- RIGHT SIDE: Nav Links + Dark Mode Toggle ---- */}
+
           <div className="flex items-center gap-1">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
@@ -66,9 +59,9 @@ export default function Navbar() {
               );
             })}
 
-            {/* ---- DARK MODE TOGGLE BUTTON ---- */}
-            {/* Calls toggleTheme() which flips between "light" and "dark" */}
-            {/* ThemeWrapper sets data-theme on <html>, globals.css applies the colors */}
+
+
+
             <button
               onClick={toggleTheme}
               aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
@@ -79,8 +72,8 @@ export default function Navbar() {
                   : "Switch to Light Mode"
               }
             >
-              {/* Show Moon when in light mode (click to go dark) */}
-              {/* Show Sun when in dark mode (click to go light) */}
+
+
               {theme === "light" ? (
                 <Moon className="h-5 w-5" />
               ) : (

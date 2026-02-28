@@ -1,10 +1,5 @@
 @import "tailwindcss";
 
-/* ============================================================
-   globals.css - Global styles for TaskManager
-   ============================================================ */
-
-/* ---- LIGHT THEME (default) ---- */
 :root {
   --background: #f9fafb;
   --foreground: #111827;
@@ -17,13 +12,11 @@
   --nav-border: #e5e7eb;
 }
 
-/* ---- DARK THEME ---- */
-/* Applied when ThemeWrapper sets <html data-theme="dark"> */
 [data-theme="dark"] {
-  --background: #0f172a; /* Dark navy background */
-  --foreground: #f1f5f9; /* Light text */
-  --card-bg: #1e293b; /* Slightly lighter than background */
-  --card-border: #334155; /* Subtle border in dark */
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --card-bg: #1e293b;
+  --card-border: #334155;
   --input-bg: #1e293b;
   --input-border: #475569;
   --muted: #94a3b8;
@@ -31,7 +24,6 @@
   --nav-border: #334155;
 }
 
-/* ---- BASE STYLES ---- */
 body {
   background-color: var(--background);
   color: var(--foreground);
@@ -43,9 +35,6 @@ body {
 html {
   scroll-behavior: smooth;
 }
-
-/* ---- DARK MODE COMPONENT OVERRIDES ---- */
-/* Cards, Navbar, Inputs, Selects all need dark backgrounds */
 
 [data-theme="dark"] .bg-white {
   background-color: var(--card-bg) !important;
@@ -104,7 +93,6 @@ html {
   color: #64748b !important;
 }
 
-/* ---- SMOOTH INPUT TRANSITIONS ---- */
 button,
 input,
 select,

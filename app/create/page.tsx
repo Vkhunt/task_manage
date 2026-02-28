@@ -1,21 +1,10 @@
-// ============================================================
-// app/create/page.tsx
-// CREATE TASK PAGE
-//
-// Spec requirements:
-//   - Client Component ("use client")
-//   - Uses useTaskForm custom hook for form state
-//   - On submit, dispatches createTask Redux thunk
-//   - After success, navigates to /tasks using useRouter
-// ============================================================
-
-"use client"; // Client component — uses hooks and dispatch
+"use client";
 
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
-import { createTask } from "@/store/taskSlice"; // Async thunk
-import { useTaskForm } from "@/hooks/useTaskForm"; // Custom hook
+import { createTask } from "@/store/taskSlice";
+import { useTaskForm } from "@/hooks/useTaskForm";
 import { cn } from "@/lib/utils";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { Save, ArrowLeft } from "lucide-react";
@@ -25,24 +14,22 @@ export default function CreateTaskPage() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
-  // Read Redux loading status so we can disable the button while saving
+
   const status = useSelector((state: RootState) => state.tasks.status);
   const isLoading = status === "loading";
 
-  // ---- useTaskForm hook (no initialValues = empty form for create) ----
-  // Returns: values, handleChange, handleSubmit, errors, reset
+
   const { values, handleChange, handleSubmit, errors, reset } = useTaskForm();
 
-  // ---- Form submit ----
-  // handleSubmit validates, then calls our callback with clean data
+
   const onSubmit = () => {
     handleSubmit(async (data) => {
-      // Dispatch createTask thunk → POST /api/tasks
+
       const result = await dispatch(createTask(data));
 
-      // createTask.fulfilled.match() checks if the thunk succeeded
+
       if (createTask.fulfilled.match(result)) {
-        // Navigate to /tasks after successful create (spec requirement)
+
         router.push("/tasks");
       }
     });
@@ -50,7 +37,7 @@ export default function CreateTaskPage() {
 
   return (
     <div className="max-w-2xl mx-auto flex flex-col gap-6">
-      {/* ---- BREADCRUMB ---- */}
+
       <div className="flex items-center gap-2 text-sm text-gray-500">
         <Link href="/tasks" className="hover:text-gray-900 transition-colors">
           Tasks
@@ -59,7 +46,7 @@ export default function CreateTaskPage() {
         <span className="text-gray-900 font-medium">Create</span>
       </div>
 
-      {/* ---- PAGE CARD ---- */}
+
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Create New Task</h1>
@@ -68,9 +55,9 @@ export default function CreateTaskPage() {
           </p>
         </div>
 
-        {/* ---- FORM FIELDS (using values + handleChange from useTaskForm) ---- */}
+
         <div className="flex flex-col gap-5">
-          {/* Title */}
+
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="title"
@@ -94,7 +81,7 @@ export default function CreateTaskPage() {
             )}
           </div>
 
-          {/* Description */}
+
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="description"
@@ -112,7 +99,7 @@ export default function CreateTaskPage() {
             />
           </div>
 
-          {/* Priority + Status */}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label
@@ -153,7 +140,7 @@ export default function CreateTaskPage() {
             </div>
           </div>
 
-          {/* Due Date + Assigned To */}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label
@@ -197,7 +184,7 @@ export default function CreateTaskPage() {
             </div>
           </div>
 
-          {/* Tags */}
+
           <div className="flex flex-col gap-1.5">
             <label htmlFor="tags" className="text-sm font-medium text-gray-700">
               Tags{" "}
@@ -215,7 +202,7 @@ export default function CreateTaskPage() {
             />
           </div>
 
-          {/* Buttons */}
+
           <div className="flex items-center justify-between pt-4 border-t border-gray-100">
             <Link
               href="/tasks"
@@ -226,7 +213,7 @@ export default function CreateTaskPage() {
             </Link>
 
             <div className="flex items-center gap-3">
-              {/* Reset — uses reset() from useTaskForm */}
+
               <button
                 type="button"
                 onClick={reset}
@@ -235,7 +222,7 @@ export default function CreateTaskPage() {
                 Reset
               </button>
 
-              {/* Submit — dispatches createTask thunk */}
+
               <button
                 type="button"
                 onClick={onSubmit}

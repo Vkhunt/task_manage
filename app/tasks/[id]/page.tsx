@@ -1,14 +1,3 @@
-// ============================================================
-// app/tasks/[id]/page.tsx
-// TASK DETAIL PAGE — Server Component
-//
-// Spec requirements:
-//   - Server Component (no "use client" — fetches on the server)
-//   - Fetches the task using fetch() on the server
-//   - Displays ALL task details
-//   - Includes an "Edit" button linking to /tasks/[id]/edit
-// ============================================================
-
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Task } from "@/types/task";
@@ -23,13 +12,13 @@ import {
   Edit2,
   Clock,
 } from "lucide-react";
-import DeleteTaskButton from "./DeleteTaskButton"; // Client component for delete
+import DeleteTaskButton from "./DeleteTaskButton";
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-// Priority badge styling (same as TaskCard)
+
 function getPriorityClasses(priority: Task["priority"]): string {
   switch (priority) {
     case "high":
@@ -44,10 +33,7 @@ function getPriorityClasses(priority: Task["priority"]): string {
 export default async function TaskDetailPage({ params }: PageProps) {
   const { id } = await params;
 
-  // ---- SERVER-SIDE FETCH ----
-  // fetch() runs on the server — not in the browser.
-  // { cache: "no-store" } means NEVER cache — always fetch latest data.
-  // This is important so edits are immediately reflected.
+
   let task: Task;
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ||
@@ -57,29 +43,29 @@ export default async function TaskDetailPage({ params }: PageProps) {
 
   try {
     const res = await fetch(`${baseUrl}/api/tasks/${id}`, {
-      cache: "no-store", // Always fresh data (spec requirement)
+      cache: "no-store",
     });
 
     if (res.status === 404) {
-      notFound(); // Renders Next.js 404 page
+      notFound();
     }
 
     if (!res.ok) throw new Error("Failed to fetch task");
 
     task = await res.json();
   } catch {
-    // notFound() is the cleanest way to handle missing tasks
+
     notFound();
   }
 
-  // Check if task is overdue (past dueDate and not done)
+
   const overdue = task.dueDate
     ? isOverdue(task.dueDate) && task.status !== "done"
     : false;
 
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
-      {/* ---- BREADCRUMB ---- */}
+
       <div className="flex items-center gap-2 text-sm text-gray-500">
         <Link
           href="/tasks"
@@ -92,14 +78,14 @@ export default async function TaskDetailPage({ params }: PageProps) {
         <span className="text-gray-700 truncate max-w-xs">{task.title}</span>
       </div>
 
-      {/* ---- TASK DETAIL CARD ---- */}
+
       <div
         className={`bg-white rounded-xl border shadow-sm overflow-hidden
         ${overdue ? "border-red-300" : "border-gray-200"}`}
       >
-        {/* ---- CARD HEADER ---- */}
+
         <div className="p-6 pb-4 border-b border-gray-100">
-          {/* Overdue warning banner */}
+
           {overdue && (
             <div
               className="flex items-center gap-2 text-sm text-red-600 font-medium
@@ -110,14 +96,14 @@ export default async function TaskDetailPage({ params }: PageProps) {
             </div>
           )}
 
-          {/* Title */}
+
           <h1 className="text-2xl font-bold text-gray-900 leading-snug">
             {task.title}
           </h1>
 
-          {/* Badges row */}
+
           <div className="flex items-center gap-2 mt-3 flex-wrap">
-            {/* Priority badge */}
+
             <span
               className={`text-xs font-medium px-2.5 py-1 rounded-full border capitalize
               ${getPriorityClasses(task.priority)}`}
@@ -125,29 +111,29 @@ export default async function TaskDetailPage({ params }: PageProps) {
               {task.priority} priority
             </span>
 
-            {/* Status badge — uses TaskStatusBadge component */}
+
             <TaskStatusBadge status={task.status} size="md" />
           </div>
         </div>
 
-        {/* ---- CARD BODY ---- */}
+
         <div className="p-6 flex flex-col gap-5">
-          {/* Description */}
+
           {task.description && (
             <div>
               <h2 className="text-sm font-semibold text-gray-700 mb-1.5">
                 Description
               </h2>
-              {/* whitespace-pre-wrap preserves line breaks in the description */}
+
               <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">
                 {task.description}
               </p>
             </div>
           )}
 
-          {/* Metadata grid */}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-            {/* Due Date */}
+
             {task.dueDate && (
               <div className="flex items-start gap-2">
                 <Calendar
@@ -167,7 +153,7 @@ export default async function TaskDetailPage({ params }: PageProps) {
               </div>
             )}
 
-            {/* Assigned To */}
+
             {task.assignedTo && (
               <div className="flex items-start gap-2">
                 <User className="h-4 w-4 mt-0.5 text-gray-400 shrink-0" />
@@ -182,7 +168,7 @@ export default async function TaskDetailPage({ params }: PageProps) {
               </div>
             )}
 
-            {/* Created At */}
+
             <div className="flex items-start gap-2">
               <Clock className="h-4 w-4 mt-0.5 text-gray-400 shrink-0" />
               <div>
@@ -196,7 +182,7 @@ export default async function TaskDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Tags */}
+
           {task.tags.length > 0 && (
             <div className="flex items-start gap-2">
               <Tag className="h-4 w-4 mt-0.5 text-gray-400 shrink-0" />
@@ -219,7 +205,7 @@ export default async function TaskDetailPage({ params }: PageProps) {
           )}
         </div>
 
-        {/* ---- CARD FOOTER: ACTION BUTTONS ---- */}
+
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
           <Link
             href="/tasks"
@@ -230,10 +216,10 @@ export default async function TaskDetailPage({ params }: PageProps) {
           </Link>
 
           <div className="flex items-center gap-2">
-            {/* Delete button — client component (needs browser events) */}
+
             <DeleteTaskButton taskId={task.id} taskTitle={task.title} />
 
-            {/* Edit button — links to /tasks/[id]/edit (spec requirement) */}
+
             <Link
               href={`/tasks/${task.id}/edit`}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
