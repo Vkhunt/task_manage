@@ -2,41 +2,122 @@
 
 /* ============================================================
    globals.css - Global styles for TaskManager
-   We use Tailwind CSS for most styling.
-   This file sets up base styles and CSS variables.
    ============================================================ */
 
+/* ---- LIGHT THEME (default) ---- */
 :root {
-  /* CSS variables for theme colors */
-  --background: #f9fafb; /* Light gray background */
-  --foreground: #111827; /* Dark text color */
+  --background: #f9fafb;
+  --foreground: #111827;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --input-bg: #ffffff;
+  --input-border: #d1d5db;
+  --muted: #6b7280;
+  --nav-bg: #ffffff;
+  --nav-border: #e5e7eb;
 }
 
+/* ---- DARK THEME ---- */
+/* Applied when ThemeWrapper sets <html data-theme="dark"> */
+[data-theme="dark"] {
+  --background: #0f172a; /* Dark navy background */
+  --foreground: #f1f5f9; /* Light text */
+  --card-bg: #1e293b; /* Slightly lighter than background */
+  --card-border: #334155; /* Subtle border in dark */
+  --input-bg: #1e293b;
+  --input-border: #475569;
+  --muted: #94a3b8;
+  --nav-bg: #1e293b;
+  --nav-border: #334155;
+}
+
+/* ---- BASE STYLES ---- */
 body {
-  /* Apply our theme colors using CSS variables */
   background-color: var(--background);
   color: var(--foreground);
-  /* Smooth transitions when colors change */
-  transition: background-color 0.2s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
-/* Smooth scrolling for the whole page */
 html {
   scroll-behavior: smooth;
 }
 
-/* Remove default list styles */
-ul,
-ol {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+/* ---- DARK MODE COMPONENT OVERRIDES ---- */
+/* Cards, Navbar, Inputs, Selects all need dark backgrounds */
+
+[data-theme="dark"] .bg-white {
+  background-color: var(--card-bg) !important;
 }
 
-/* Make buttons and inputs use the same font as the page */
+[data-theme="dark"] .border-gray-200 {
+  border-color: var(--card-border) !important;
+}
+
+[data-theme="dark"] .border-gray-100 {
+  border-color: var(--card-border) !important;
+}
+
+[data-theme="dark"] .text-gray-900 {
+  color: var(--foreground) !important;
+}
+
+[data-theme="dark"] .text-gray-700 {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .text-gray-600 {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .text-gray-500 {
+  color: #64748b !important;
+}
+
+[data-theme="dark"] .text-gray-400 {
+  color: #475569 !important;
+}
+
+[data-theme="dark"] .bg-gray-50 {
+  background-color: #1e293b !important;
+}
+
+[data-theme="dark"] .bg-gray-100 {
+  background-color: #334155 !important;
+}
+
+[data-theme="dark"] .hover\:bg-gray-50:hover {
+  background-color: #334155 !important;
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--foreground) !important;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* ---- SMOOTH INPUT TRANSITIONS ---- */
 button,
 input,
 select,
 textarea {
   font-family: inherit;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }

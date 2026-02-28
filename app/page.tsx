@@ -22,7 +22,11 @@ async function getTasks(): Promise<Task[]> {
   try {
     // In server components, we use the full URL with localhost
     // process.env.NEXT_PUBLIC_APP_URL defaults to localhost in dev
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000");
     const response = await fetch(`${baseUrl}/api/tasks`, {
       // cache: "no-store" = always fetch fresh data (don't use cache)
       cache: "no-store",
